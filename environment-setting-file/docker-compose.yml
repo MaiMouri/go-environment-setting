@@ -1,0 +1,27 @@
+version: '3'
+services:
+  app:
+    build:
+      context: ./app
+    ports:
+      - "8080:8080"
+    environment: 
+      GO_ENV: docker #docker用設定ファイルを読み込むように環境変数を設定
+      TZ: Asia/Tokyo
+    volumes:
+      - ./app:/go/src/github.com/s-moteki/go-playground/environment-setting-file/app
+      - ./envfiles:/go/src/github.com/s-moteki/go-playground/environment-setting-file/envfiles
+  mysql:
+    image: mysql:5.7
+    ports: 
+      - "3306:3306"
+    volumes:
+      - "./docker/db/conf.d/mysql.conf:/etc/mysql/conf.d/my.cnf"
+      - "./docker/db/initdb.d:/docker-entrypoint-initdb.d"
+      - "./log/mysql:/var/log/mysql"  
+      - "./docker/db/data:/var/lib/mysql"
+    environment:
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: go_test
+    
